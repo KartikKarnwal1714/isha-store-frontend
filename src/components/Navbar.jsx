@@ -142,7 +142,7 @@ export default function Navbar({ variant = "page" }) {
             className="flex-1 lg:flex-none text-center min-w-0 px-1"
           >
             <h1 className="truncate text-lg sm:text-2xl lg:text-3xl xl:text-4xl font-black tracking-[2px] sm:tracking-[4px] lg:tracking-[6px] text-[#7c3aed]">
-              ISHA STORE
+             OGY
             </h1>
           </Link>
 
@@ -219,7 +219,7 @@ export default function Navbar({ variant = "page" }) {
           <div className="fixed top-0 left-0 h-full w-[80%] max-w-[320px] bg-white shadow-2xl z-[3000] p-6 overflow-y-auto lg:hidden">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-black tracking-[2px] text-[#7c3aed]">
-                ISHA STORE
+                OGY
               </h2>
 
               <button

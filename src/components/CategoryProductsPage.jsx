@@ -51,11 +51,32 @@ export default function CategoryProductsPage({
     useState(false);
 
   // =========================================
+  // MEN'S INNERWEAR FILTER
+  // =========================================
+
+  const [innerwearFilter, setInnerwearFilter] =
+    useState("ALL");
+
+  const isMensInnerwear =
+    category.toLowerCase() === "men" &&
+    decodedSubCategory.toLowerCase() ===
+      "ugs (innerwear)";
+
+  const innerwearTypes = [
+    "ALL",
+    "TRUNK",
+    "V-SHAPE",
+    "BRIEF",
+  ];
+
+  // =========================================
   // PAGINATION STATES
   // =========================================
 
   const [currentPage, setCurrentPage] = useState(1);
+
   const [totalPages, setTotalPages] = useState(0);
+
   const [totalProducts, setTotalProducts] =
     useState(0);
 
@@ -84,13 +105,13 @@ export default function CategoryProductsPage({
       setError("");
 
       const params = {
-  category,
-  subCategory: decodedSubCategory,
-  search: debouncedSearch,
-  sort,
-  page: currentPage,
-  limit: productsPerPage,
-};
+        category,
+        subCategory: decodedSubCategory,
+        search: debouncedSearch,
+        sort,
+        page: currentPage,
+        limit: productsPerPage,
+      };
 
       if (inStock) {
         params.inStock = true;
@@ -134,17 +155,17 @@ export default function CategoryProductsPage({
   };
 
   useEffect(() => {
-  fetchCategoryProducts();
-}, [
-  category,
-  decodedSubCategory,
-  debouncedSearch,
-  sort,
-  inStock,
-  minPrice,
-  maxPrice,
-  currentPage,
-]);
+    fetchCategoryProducts();
+  }, [
+    category,
+    decodedSubCategory,
+    debouncedSearch,
+    sort,
+    inStock,
+    minPrice,
+    maxPrice,
+    currentPage,
+  ]);
 
   // =========================================
   // PRODUCT HELPERS
@@ -160,29 +181,43 @@ export default function CategoryProductsPage({
     );
   };
 
- const getProductPrice = (product) => {
-  return Number(
-    product.minimumPrice ||
-      product.colors?.[0]?.sizes?.[0]?.price ||
-      product.price ||
-      0
-  );
-};
+  const getProductPrice = (product) => {
+    return Number(
+      product.minimumPrice ||
+        product.colors?.[0]?.sizes?.[0]?.price ||
+        product.price ||
+        0
+    );
+  };
 
   const getProductOriginalPrice = (product) => {
-  return Number(
-    product.minimumOriginalPrice ||
-      product.colors?.[0]?.sizes?.[0]
-        ?.originalPrice ||
-      product.originalPrice ||
-      0
-  );
-};
+    return Number(
+      product.minimumOriginalPrice ||
+        product.colors?.[0]?.sizes?.[0]?.originalPrice ||
+        product.originalPrice ||
+        0
+    );
+  };
 
- const getProductStock = (product) => {
-  return Number(product.totalStock || 0);
-};
+  const getProductStock = (product) => {
+    return Number(product.totalStock || 0);
+  };
 
+  // =========================================
+  // MEN'S INNERWEAR BUTTON FILTER
+  // =========================================
+
+  const handleInnerwearFilter = (type) => {
+    setInnerwearFilter(type);
+
+    if (type === "ALL") {
+      setSearch("");
+    } else {
+      setSearch(type);
+    }
+
+    setCurrentPage(1);
+  };
 
   // =========================================
   // RESET FILTERS
@@ -191,6 +226,7 @@ export default function CategoryProductsPage({
   const resetFilters = () => {
     setSearch("");
     setDebouncedSearch("");
+    setInnerwearFilter("ALL");
     setSort("newest");
     setInStock(false);
     setMinPrice("");
@@ -211,7 +247,9 @@ export default function CategoryProductsPage({
 
   const goToPreviousPage = () => {
     if (currentPage > 1) {
-      setCurrentPage((previous) => previous - 1);
+      setCurrentPage(
+        (previous) => previous - 1
+      );
 
       window.scrollTo({
         top: 650,
@@ -222,7 +260,9 @@ export default function CategoryProductsPage({
 
   const goToNextPage = () => {
     if (currentPage < totalPages) {
-      setCurrentPage((previous) => previous + 1);
+      setCurrentPage(
+        (previous) => previous + 1
+      );
 
       window.scrollTo({
         top: 650,
@@ -231,8 +271,13 @@ export default function CategoryProductsPage({
     }
   };
 
+  // =========================================
+  // PAGE
+  // =========================================
+
   return (
     <div className="bg-[#f8f5ef] min-h-screen">
+
       {/* =====================================
           NAVBAR
       ====================================== */}
@@ -245,6 +290,7 @@ export default function CategoryProductsPage({
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-4 sm:pt-10">
         <div className="relative rounded-2xl sm:rounded-[40px] overflow-hidden h-[160px] sm:h-[420px] shadow-xl">
+
           <img
             src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1400&auto=format&fit=crop"
             alt={decodedSubCategory}
@@ -257,6 +303,7 @@ export default function CategoryProductsPage({
               {decodedSubCategory.toUpperCase()}
             </h1>
           </div>
+
         </div>
       </div>
 
@@ -265,7 +312,9 @@ export default function CategoryProductsPage({
       ====================================== */}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 mt-4 sm:mt-10">
+
         <div className="bg-white rounded-2xl md:rounded-full flex items-center px-4 sm:px-6 py-2.5 sm:py-4 shadow border">
+
           <FaSearch className="text-gray-500" />
 
           <input
@@ -273,32 +322,82 @@ export default function CategoryProductsPage({
             type="text"
             placeholder={`Search ${decodedSubCategory}...`}
             value={search}
-            onChange={(event) =>
-              setSearch(event.target.value)
-            }
+            onChange={(event) => {
+              setSearch(event.target.value);
+
+              if (
+                event.target.value.trim() !==
+                innerwearFilter
+              ) {
+                setInnerwearFilter("ALL");
+              }
+            }}
             className="w-full bg-transparent px-4 outline-none"
           />
 
           {search && (
             <button
               type="button"
-              onClick={() => setSearch("")}
+              onClick={() => {
+                setSearch("");
+                setInnerwearFilter("ALL");
+              }}
               className="text-gray-400 hover:text-red-500"
             >
               <FaTimes />
             </button>
           )}
+
         </div>
       </div>
+
+      {/* =====================================
+          MEN'S INNERWEAR FILTER
+          ONLY ON UGs (INNERWEAR)
+      ====================================== */}
+
+      {isMensInnerwear && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 mt-4 sm:mt-6">
+
+          <div className="bg-white rounded-2xl sm:rounded-[28px] border shadow-sm p-3 sm:p-5">
+
+            <div className="flex flex-wrap items-center gap-3">
+
+              {innerwearTypes.map((type) => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() =>
+                    handleInnerwearFilter(type)
+                  }
+                  className={`px-5 py-2.5 sm:px-7 sm:py-3 rounded-full font-bold border transition ${
+                    innerwearFilter === type
+                      ? "bg-black text-white border-black"
+                      : "bg-white text-black border-gray-300 hover:bg-black hover:text-white hover:border-black"
+                  }`}
+                >
+                  {type}
+                </button>
+              ))}
+
+            </div>
+
+          </div>
+        </div>
+      )}
 
       {/* =====================================
           FILTER AND SORT SECTION
       ====================================== */}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 mt-3 sm:mt-6">
+
         <div className="bg-white rounded-2xl sm:rounded-[28px] border shadow-sm p-3 sm:p-5">
+
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+
             <div>
+
               <h2 className="text-lg font-bold">
                 {totalProducts}{" "}
                 {totalProducts === 1
@@ -309,11 +408,13 @@ export default function CategoryProductsPage({
 
               <p className="text-sm text-gray-500">
                 {heading} / {decodedSubCategory}
-            </p>
+              </p>
+
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
-              {/* SORT SELECT */}
+
+              {/* SORT */}
 
               <select
                 value={sort}
@@ -323,6 +424,7 @@ export default function CategoryProductsPage({
                 }}
                 className="border rounded-xl px-4 py-3 outline-none bg-white"
               >
+
                 <option value="newest">
                   Newest First
                 </option>
@@ -346,6 +448,7 @@ export default function CategoryProductsPage({
                 <option value="priceHighToLow">
                   Price: High to Low
                 </option>
+
               </select>
 
               {/* FILTER BUTTON */}
@@ -366,7 +469,7 @@ export default function CategoryProductsPage({
                   : "Show Filters"}
               </button>
 
-              {/* RESET BUTTON */}
+              {/* RESET */}
 
               {hasActiveFilters && (
                 <button
@@ -377,16 +480,21 @@ export default function CategoryProductsPage({
                   Reset
                 </button>
               )}
+
             </div>
           </div>
 
-          {/* EXPANDED FILTERS */}
+          {/* =====================================
+              EXPANDED FILTERS
+          ====================================== */}
 
           {showFilters && (
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-6 pt-6 border-t">
+
               {/* MINIMUM PRICE */}
 
               <div>
+
                 <label className="block font-semibold mb-2">
                   Minimum Price
                 </label>
@@ -397,16 +505,20 @@ export default function CategoryProductsPage({
                   placeholder="₹0"
                   value={minPrice}
                   onChange={(event) => {
-                    setMinPrice(event.target.value);
+                    setMinPrice(
+                      event.target.value
+                    );
                     setCurrentPage(1);
                   }}
                   className="w-full border px-4 py-3 rounded-xl outline-none focus:border-black"
                 />
+
               </div>
 
               {/* MAXIMUM PRICE */}
 
               <div>
+
                 <label className="block font-semibold mb-2">
                   Maximum Price
                 </label>
@@ -417,48 +529,63 @@ export default function CategoryProductsPage({
                   placeholder="₹5000"
                   value={maxPrice}
                   onChange={(event) => {
-                    setMaxPrice(event.target.value);
+                    setMaxPrice(
+                      event.target.value
+                    );
                     setCurrentPage(1);
                   }}
                   className="w-full border px-4 py-3 rounded-xl outline-none focus:border-black"
                 />
+
               </div>
 
-              {/* STOCK FILTER */}
+              {/* STOCK */}
 
               <div>
+
                 <label className="block font-semibold mb-2">
                   Availability
                 </label>
 
                 <label className="border rounded-xl px-4 py-3 flex items-center gap-3 cursor-pointer">
+
                   <input
                     type="checkbox"
                     checked={inStock}
                     onChange={(event) => {
-                      setInStock(event.target.checked);
+                      setInStock(
+                        event.target.checked
+                      );
                       setCurrentPage(1);
                     }}
                     className="w-5 h-5"
                   />
 
-                  <span>In-stock products only</span>
+                  <span>
+                    In-stock products only
+                  </span>
+
                 </label>
+
               </div>
 
               {/* ACTIVE CATEGORY */}
 
               <div>
+
                 <label className="block font-semibold mb-2">
                   Category
                 </label>
 
                 <div className="border rounded-xl px-4 py-3 bg-gray-50">
-                {heading} / {decodedSubCategory}
+                  {heading} / {decodedSubCategory}
                 </div>
+
               </div>
+
             </div>
           )}
+
         </div>
       </div>
 
@@ -467,15 +594,19 @@ export default function CategoryProductsPage({
       ====================================== */}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-14">
+
         <h2 className="text-4xl font-black text-center mb-10">
-            {heading} {decodedSubCategory}
+          {heading} {decodedSubCategory}
         </h2>
 
         {/* ERROR */}
 
         {error && (
           <div className="max-w-xl mx-auto bg-red-50 border border-red-200 text-red-700 p-5 rounded-2xl text-center mb-8">
-            <p className="font-bold">{error}</p>
+
+            <p className="font-bold">
+              {error}
+            </p>
 
             <button
               type="button"
@@ -484,23 +615,30 @@ export default function CategoryProductsPage({
             >
               Try Again
             </button>
+
           </div>
         )}
 
         {/* LOADING */}
 
         {loading ? (
+
           <div className="text-center py-16">
+
             <div className="w-12 h-12 mx-auto border-4 border-gray-200 border-t-black rounded-full animate-spin" />
 
             <p className="text-xl font-bold mt-5">
               Loading products...
             </p>
+
           </div>
+
         ) : products.length === 0 ? (
+
           /* NO PRODUCTS */
 
           <div className="text-center py-16">
+
             <FaSearch className="mx-auto text-5xl text-gray-300" />
 
             <h1 className="text-center text-3xl font-bold mt-5">
@@ -520,13 +658,19 @@ export default function CategoryProductsPage({
                 Reset Filters
               </button>
             )}
+
           </div>
+
         ) : (
+
           <>
+
             {/* PRODUCT GRID */}
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-8">
+
               {products.map((product) => {
+
                 const price =
                   getProductPrice(product);
 
@@ -547,16 +691,20 @@ export default function CategoryProductsPage({
                     : 0;
 
                 return (
+
                   <div
                     key={product._id}
                     className="bg-white rounded-2xl sm:rounded-[28px] overflow-hidden shadow-sm hover:shadow-xl transition group"
                   >
+
                     {/* PRODUCT IMAGE */}
 
                     <div className="relative overflow-hidden">
+
                       <Link
                         to={`/product/${product._id}`}
                       >
+
                         <img
                           src={getProductImage(product)}
                           alt={
@@ -568,6 +716,7 @@ export default function CategoryProductsPage({
                               "https://via.placeholder.com/500x500?text=No+Image";
                           }}
                         />
+
                       </Link>
 
                       {discount > 0 && (
@@ -578,22 +727,28 @@ export default function CategoryProductsPage({
 
                       {stock <= 0 && (
                         <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+
                           <span className="bg-white text-red-600 font-bold text-xs sm:text-base px-3 py-1.5 sm:px-5 sm:py-2 rounded-full">
                             Out of Stock
                           </span>
+
                         </div>
                       )}
+
                     </div>
 
                     {/* PRODUCT INFORMATION */}
 
                     <div className="p-2.5 sm:p-5 text-left">
+
                       <Link
                         to={`/product/${product._id}`}
                       >
+
                         <h3 className="text-xs sm:text-lg font-semibold text-black leading-snug line-clamp-2">
                           {product.name}
                         </h3>
+
                       </Link>
 
                       <p className="text-[11px] sm:text-sm text-gray-600 mt-1">
@@ -601,6 +756,7 @@ export default function CategoryProductsPage({
                       </p>
 
                       <div className="flex items-end gap-2 mt-1.5 sm:mt-3">
+
                         <span className="text-sm sm:text-2xl font-black text-black">
                           ₹{price}
                         </span>
@@ -610,6 +766,7 @@ export default function CategoryProductsPage({
                             ₹{originalPrice}
                           </span>
                         )}
+
                       </div>
 
                       {stock > 2 && (
@@ -636,16 +793,20 @@ export default function CategoryProductsPage({
                       >
                         View Product
                       </Link>
+
                     </div>
+
                   </div>
                 );
               })}
+
             </div>
 
             {/* PAGINATION */}
 
             {totalPages > 1 && (
               <div className="flex flex-col sm:flex-row items-center justify-center gap-5 mt-14">
+
                 <button
                   type="button"
                   onClick={goToPreviousPage}
@@ -671,11 +832,15 @@ export default function CategoryProductsPage({
                   Next
                   <FaArrowRight />
                 </button>
+
               </div>
             )}
+
           </>
         )}
+
       </div>
+
     </div>
   );
 }

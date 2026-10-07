@@ -3,7 +3,11 @@ import { FaSearch, FaFire } from "react-icons/fa";
 
 import { Link } from "react-router-dom";
 
-import { getProducts } from "../api/productAPI";
+import {
+  getProducts,
+  trackProductSearch,
+} from "../api/productAPI";
+
 import Navbar from "../components/Navbar";
 
 export default function SearchProduct() {
@@ -32,23 +36,47 @@ export default function SearchProduct() {
     }
 
     try {
-      setLoading(true);
+  setLoading(true);
 
-      const res = await getProducts({
-        search: cleanSearch,
-      });
+  const res = await getProducts({
+    search: cleanSearch,
+  });
 
-      setProducts(res.data.products || []);
-    } catch (error) {
-      console.error(
-        "Search Product Error:",
-        error.response?.data || error.message
-      );
+  const foundProducts =
+    res.data.products || [];
 
-      setProducts([]);
-    } finally {
-      setLoading(false);
-    }
+  setProducts(foundProducts);
+
+  const customerToken =
+    localStorage.getItem(
+      "customerToken"
+    );
+
+  if (
+    customerToken &&
+    cleanSearch.length >= 2
+  ) {
+    trackProductSearch(cleanSearch).catch(
+      (searchError) => {
+        console.error(
+          "Search tracking error:",
+          searchError.response?.data ||
+            searchError.message
+        );
+      }
+    );
+  }
+} catch (error) {
+  console.error(
+    "Search Product Error:",
+    error.response?.data ||
+      error.message
+  );
+
+  setProducts([]);
+} finally {
+  setLoading(false);
+}
   };
   useEffect(() => {
     const delaySearch = setTimeout(() => {

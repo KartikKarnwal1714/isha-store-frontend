@@ -1,81 +1,76 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 
 import { FaSearch } from "react-icons/fa";
 
 import Navbar from "../components/Navbar";
+import { getFrontendSubcategories } from "../api/subcategoryAPI";
+
+const DEFAULT_IMAGES = {
+  "T-Shirts":
+    "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=1200&auto=format&fit=crop",
+  Lowers:
+    "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1200&auto=format&fit=crop",
+  "UGs (Innerwear)":
+    "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?q=80&w=1200&auto=format&fit=crop",
+  Belts:
+    "https://images.unsplash.com/photo-1624222247344-550fb60583dc?q=80&w=1200&auto=format&fit=crop",
+  "Purses/Wallets":
+    "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=1200&auto=format&fit=crop",
+  Shorts:
+    "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?q=80&w=1200&auto=format&fit=crop",
+  "Swimming Costumes":
+    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format&fit=crop",
+  "Gym Lowers":
+    "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1200&auto=format&fit=crop",
+  "Gym T-Shirts":
+    "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1200&auto=format&fit=crop",
+  Socks:
+    "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?q=80&w=1200&auto=format&fit=crop",
+  Handkerchiefs:
+    "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?q=80&w=1200&auto=format&fit=crop",
+  Umbrellas:
+    "https://images.unsplash.com/photo-1534270804882-6b5048b1c1fc?q=80&w=1200&auto=format&fit=crop",
+  Raincoats:
+    "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop",
+};
 
 export default function Men() {
   const [search, setSearch] = useState("");
+  const [menCategories, setMenCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const menCategories = [
-    {
-      name: "T-Shirts",
-      image:
-        "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=1200&auto=format&fit=crop",
-    },
-    {
-      name: "Lowers",
-      image:
-        "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1200&auto=format&fit=crop",
-    },
-    {
-      name: "UGs (Innerwear)",
-      image:
-        "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?q=80&w=1200&auto=format&fit=crop",
-    },
-    {
-      name: "Belts",
-      image:
-        "https://images.unsplash.com/photo-1624222247344-550fb60583dc?q=80&w=1200&auto=format&fit=crop",
-    },
-    {
-      name: "Purses / Wallets",
-      image:
-        "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=1200&auto=format&fit=crop",
-    },
-    {
-      name: "Shorts",
-      image:
-        "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?q=80&w=1200&auto=format&fit=crop",
-    },
-    {
-      name: "Swimming Costumes",
-      image:
-        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format&fit=crop",
-    },
-    {
-      name: "Gym Lowers",
-      image:
-        "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1200&auto=format&fit=crop",
-    },
-    {
-      name: "Gym T-Shirts",
-      image:
-        "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1200&auto=format&fit=crop",
-    },
-    {
-      name: "Socks",
-      image:
-        "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?q=80&w=1200&auto=format&fit=crop",
-    },
-    {
-      name: "Handkerchiefs",
-      image:
-        "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?q=80&w=1200&auto=format&fit=crop",
-    },
-    {
-      name: "Umbrellas",
-      image:
-        "https://images.unsplash.com/photo-1534270804882-6b5048b1c1fc?q=80&w=1200&auto=format&fit=crop",
-    },
-    {
-      name: "Raincoats",
-      image:
-        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop",
-    },
-  ];
+  useEffect(() => {
+    const fetchMenCategories = async () => {
+      try {
+        const response = await getFrontendSubcategories("Men");
+
+        const data = response.data?.subcategories || [];
+
+        setMenCategories(
+          data.map((subcategory) => ({
+            ...subcategory,
+            image:
+              subcategory.image ||
+              DEFAULT_IMAGES[subcategory.name] ||
+              DEFAULT_IMAGES["T-Shirts"],
+          }))
+        );
+      } catch (error) {
+        console.error(
+          "Men subcategories error:",
+          error.response?.data || error.message
+        );
+
+        setMenCategories([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMenCategories();
+  }, []);
 
   const filteredCategories = menCategories.filter((category) =>
     category.name.toLowerCase().includes(search.toLowerCase())
@@ -121,7 +116,13 @@ export default function Men() {
           Men Categories
         </h1>
 
-        {filteredCategories.length === 0 ? (
+        {loading ? (
+          <div className="text-center py-10">
+            <p className="text-lg font-semibold">
+              Loading categories...
+            </p>
+          </div>
+        ) : filteredCategories.length === 0 ? (
           <div className="bg-white rounded-3xl p-10 text-center shadow">
             <h2 className="text-2xl font-bold">
               No category found
@@ -129,9 +130,9 @@ export default function Men() {
           </div>
         ) : (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-8">
-            {filteredCategories.map((category, index) => (
+            {filteredCategories.map((category) => (
               <div
-                key={index}
+                key={category._id}
                 className="bg-white rounded-2xl sm:rounded-[35px] border border-orange-100 overflow-hidden shadow-sm hover:shadow-xl transition group"
               >
                 <img

@@ -347,7 +347,7 @@ const [
 
   const heroSlides = [
     {
-      title: "ISHA STORE",
+      title: "OGY",
       subtitle: "Fashion • Cosmetics • Jewellery",
       description:
         "One store for clothes, beauty, jewellery, accessories and lifestyle products.",
@@ -831,7 +831,7 @@ const [
         <div className="relative z-10 grid lg:grid-cols-2 gap-6 sm:gap-10 items-center px-4 sm:px-10 lg:px-20 py-8 sm:py-14">
           <div className="text-white max-w-2xl">
             <p className="inline-block bg-white/20 backdrop-blur-md px-3 py-1.5 sm:px-6 sm:py-3 rounded-full text-xs sm:text-sm font-bold tracking-widest mb-4 sm:mb-8">
-              WELCOME TO ISHA STORE
+              WELCOME TO OGY
             </p>
 
             <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black leading-tight">
@@ -1165,10 +1165,10 @@ const [
       <footer className="bg-gradient-to-br from-[#1e1b4b] via-[#312e81] to-[#7c2d12] text-white px-4 sm:px-8 py-10 sm:py-16">
         <div className="grid md:grid-cols-4 gap-10">
           <div>
-            <h2 className="text-3xl font-black tracking-[5px]">ISHA STORE</h2>
+            <h2 className="text-3xl font-black tracking-[5px]">OGY</h2>
 
             <p className="mt-5 text-gray-300 leading-8 text-sm">
-              ISHA STORE brings fashion, cosmetics, jewellery and daily
+              OGY brings fashion, cosmetics, jewellery and daily
               lifestyle products together in one modern shopping experience.
             </p>
           </div>
@@ -1212,7 +1212,7 @@ const [
         </div>
 
         <div className="border-t border-white/20 mt-14 pt-8 text-center text-gray-300 text-sm">
-          © 2026 ISHA STORE. All Rights Reserved.
+          © 2026 OGY. All Rights Reserved.
         </div>
       </footer>
 
